@@ -5,7 +5,7 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2017-11-07T22:47:12")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2017-11-08T23:17:13")
 @StaticMetamodel(TarjetaCreditoAlpes.class)
 public class TarjetaCreditoAlpes_ { 
 
@@ -15,6 +15,6 @@ public class TarjetaCreditoAlpes_ {
     public static volatile SingularAttribute<TarjetaCreditoAlpes, String> banco;
     public static volatile SingularAttribute<TarjetaCreditoAlpes, String> nombreTitular;
     public static volatile SingularAttribute<TarjetaCreditoAlpes, String> login;
-    public static volatile SingularAttribute<TarjetaCreditoAlpes, Integer> cupo;
+    public static volatile SingularAttribute<TarjetaCreditoAlpes, Double> cupo;
 
 }

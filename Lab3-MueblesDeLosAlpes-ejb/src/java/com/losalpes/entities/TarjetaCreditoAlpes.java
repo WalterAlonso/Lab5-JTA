@@ -32,7 +32,7 @@ public class TarjetaCreditoAlpes implements Serializable {
     private String banco;
     
     @Column(nullable=false)
-    private int cupo;
+    private double cupo;
     
     @Column(nullable=false)
     private Date fechaExpedicion;
@@ -67,11 +67,11 @@ public class TarjetaCreditoAlpes implements Serializable {
         this.banco = banco;
     }
 
-    public int getCupo() {
+    public double getCupo() {
         return cupo;
     }
 
-    public void setCupo(int cupo) {
+    public void setCupo(double cupo) {
         this.cupo = cupo;
     }
 

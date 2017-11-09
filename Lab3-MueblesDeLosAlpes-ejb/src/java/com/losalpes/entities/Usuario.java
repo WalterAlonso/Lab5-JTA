@@ -116,7 +116,8 @@ public class Usuario implements Serializable
     @OneToMany(mappedBy="comprador")
     private List<RegistroVenta>compras;
 
-
+    @Transient
+    private TarjetaCreditoAlpes tarjetaCreditoAlpes;
     
     //-----------------------------------------------------------
     // Constructores
@@ -406,6 +407,20 @@ public class Usuario implements Serializable
     public void setSeleccion(boolean seleccion)
     {
         this.seleccion = seleccion;
+    }
+
+    /**
+     * @return the tarjetaCreditoAlpes
+     */
+    public TarjetaCreditoAlpes getTarjetaCreditoAlpes() {
+        return tarjetaCreditoAlpes;
+    }
+
+    /**
+     * @param tarjetaCreditoAlpes the tarjetaCreditoAlpes to set
+     */
+    public void setTarjetaCreditoAlpes(TarjetaCreditoAlpes tarjetaCreditoAlpes) {
+        this.tarjetaCreditoAlpes = tarjetaCreditoAlpes;
     }
     
     
