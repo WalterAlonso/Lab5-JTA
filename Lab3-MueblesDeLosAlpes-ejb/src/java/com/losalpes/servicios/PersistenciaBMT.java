@@ -27,7 +27,7 @@ import javax.transaction.UserTransaction;
  */
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
-public class PersistenciaBMT {
+public class PersistenciaBMT implements IPersistencia {
 
     @Resource
     private UserTransaction userTransaction;
@@ -86,8 +86,6 @@ public class PersistenciaBMT {
             //retornar los objetos a como estaban? no es necesario, porque cuando los consulte tendra lo mismo            
         }
     }
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
 
     private void DescontarCupoTarjeta(RegistroVenta venta) throws Exception { //,CupoInsuficienteException
         double valorTotal = venta.getProducto().getPrecio() * venta.getCantidad();
@@ -124,7 +122,9 @@ public class PersistenciaBMT {
      * modificar.
      */
     public void update(Object obj) {
+        initTransaction();
         ventas.merge(obj);
+        commitTransaction();
     }
 
     /**
@@ -133,9 +133,10 @@ public class PersistenciaBMT {
      * @param obj Objeto que representa la instancia de la entidad que se quiere
      * borrar.
      */
-    public void delete(Object obj) throws OperacionInvalidaException {
+    public void delete(Object obj) {
+        initTransaction();
         ventas.remove(obj);
-
+        commitTransaction();
     }
 
     /**

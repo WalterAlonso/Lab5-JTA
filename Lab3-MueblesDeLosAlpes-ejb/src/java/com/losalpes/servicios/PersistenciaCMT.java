@@ -26,7 +26,7 @@ import javax.persistence.*;
  */
 @Stateless
 @TransactionManagement(TransactionManagementType.CONTAINER)
-public class PersistenciaCMT {
+public class PersistenciaCMT implements IPersistencia {
 
     /**
      * La entidad encargada de persistir en la base de datos
@@ -48,7 +48,7 @@ public class PersistenciaCMT {
     @Resource
     private SessionContext context;
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED) //este se podria omitir
     public void comprar(RegistroVenta venta) {
         try {
             ventas.persist(venta);
@@ -100,10 +100,9 @@ public class PersistenciaCMT {
      * Permite borrar un objeto dentro de la persistencia del sistema.
      * @param obj Objeto que representa la instancia de la entidad que se quiere borrar.
      */
-    public void delete(Object obj) throws OperacionInvalidaException
+    public void delete(Object obj)
     {
         ventas.remove(obj);
-
     }
 
     /**
@@ -113,7 +112,6 @@ public class PersistenciaCMT {
      */
     public List findAll(Class c)
     {
-
         return ventas.createQuery("select O from " + c.getSimpleName() + " as O").getResultList();
     }
 
