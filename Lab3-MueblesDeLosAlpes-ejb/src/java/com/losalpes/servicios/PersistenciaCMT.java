@@ -38,7 +38,7 @@ public class PersistenciaCMT implements IPersistenciaCMTMockLocal, IPersistencia
      * La entidad encargada de persistir en la base de datos
      */
     @PersistenceContext(unitName = "Lab3-MueblesDeLosAlpes-ejbPUDerby")
-    private EntityManager tarjeta;
+    private EntityManager derby;
 
     @PostConstruct
     public void postConstruct() {
@@ -69,7 +69,7 @@ public class PersistenciaCMT implements IPersistenciaCMTMockLocal, IPersistencia
         TarjetaCreditoAlpes tarjetaCredito = venta.getComprador().getTarjetaCreditoAlpes();
         double saldoEnTargeta = tarjetaCredito.getCupo() - valorTotal;
         tarjetaCredito.setCupo(saldoEnTargeta);
-        tarjeta.persist(tarjetaCredito);
+        derby.persist(tarjetaCredito);
 
         if (tarjetaCredito.getCupo() < 0) {
             //throw new CupoInsuficienteException();
