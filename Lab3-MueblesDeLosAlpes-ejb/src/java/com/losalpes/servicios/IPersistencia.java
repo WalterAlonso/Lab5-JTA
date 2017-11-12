@@ -8,11 +8,13 @@ package com.losalpes.servicios;
 import com.losalpes.entities.RegistroVenta;
 import com.losalpes.excepciones.OperacionInvalidaException;
 import java.util.List;
+import javax.ejb.Remote;
 
 /**
  *
  * @author WAlonsoR
  */
+@Remote
 public interface IPersistencia {
     
     /**

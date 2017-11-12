@@ -7,6 +7,8 @@ package com.losalpes.servicios;
 
 import com.losalpes.entities.RegistroVenta;
 import com.losalpes.entities.TarjetaCreditoAlpes;
+import com.losalpes.entities.Vendedor;
+import com.losalpes.excepciones.CupoInsuficienteException;
 import com.losalpes.excepciones.OperacionInvalidaException;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -79,15 +81,13 @@ public class PersistenciaBMT implements IPersistencia {
             ventas.persist(venta);
             DescontarCupoTarjeta(venta);
             commitTransaction();
-            /*} catch (CupoInsuficienteException e) {
-        context.setRollbackOnly();*/
-        } catch (Exception e) { //TODO: quitarla cuando se implemente la excepcion            
+        } catch (CupoInsuficienteException e) {
             rollbackTransaction();
-            //retornar los objetos a como estaban? no es necesario, porque cuando los consulte tendra lo mismo            
+
         }
     }
 
-    private void DescontarCupoTarjeta(RegistroVenta venta) throws Exception { //,CupoInsuficienteException
+    private void DescontarCupoTarjeta(RegistroVenta venta) throws CupoInsuficienteException { //,CupoInsuficienteException
         double valorTotal = venta.getProducto().getPrecio() * venta.getCantidad();
         TarjetaCreditoAlpes tarjetaCredito = venta.getComprador().getTarjetaCreditoAlpes();
         double saldoEnTargeta = tarjetaCredito.getCupo() - valorTotal;
@@ -95,8 +95,7 @@ public class PersistenciaBMT implements IPersistencia {
         tarjeta.persist(tarjetaCredito);
 
         if (tarjetaCredito.getCupo() < 0) {
-            //throw new CupoInsuficienteException();
-            throw new Exception();
+            throw new CupoInsuficienteException();
         }
     }
 
@@ -161,5 +160,25 @@ public class PersistenciaBMT implements IPersistencia {
      */
     public Object findById(Class c, Object id) {
         return ventas.find(c, id);
+    }
+
+    public void insertarVendedor(Vendedor vendedor) {
+        try {
+            initTransaction();
+            ventas.persist(vendedor);
+            commitTransaction();
+        } catch (Exception e) {
+            rollbackTransaction();
+        }
+    }
+
+    public void eliminarVendedor(Vendedor vendedor) {
+        try {
+            initTransaction();
+            ventas.remove(vendedor);
+            commitTransaction();
+        } catch (Exception e) {
+            rollbackTransaction();
+        }
     }
 }
