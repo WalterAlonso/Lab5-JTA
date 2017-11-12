@@ -26,7 +26,7 @@ import javax.persistence.*;
  */
 @Stateless
 @TransactionManagement(TransactionManagementType.CONTAINER)
-public class PersistenciaCMT implements IPersistencia {
+public class PersistenciaCMT implements IPersistenciaCMTMockLocal, IPersistenciaCMTMockRemote {
 
     /**
      * La entidad encargada de persistir en la base de datos

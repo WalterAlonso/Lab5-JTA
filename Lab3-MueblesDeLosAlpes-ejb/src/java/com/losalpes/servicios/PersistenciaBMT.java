@@ -27,7 +27,7 @@ import javax.transaction.UserTransaction;
  */
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
-public class PersistenciaBMT implements IPersistencia {
+public class PersistenciaBMT implements IPersistenciaBMTMockLocal, IPersistenciaBMTMockRemote {
 
     @Resource
     private UserTransaction userTransaction;
