@@ -16,7 +16,6 @@ import javax.ejb.Local;
  */
 @Local
 public interface IPersistenciaBMTMockLocal {
-    
     /**
      * Metodo para crear el objeto de compra, vcalida contra la bd de Derby el cupo de tarjeta.
      * @param venta 

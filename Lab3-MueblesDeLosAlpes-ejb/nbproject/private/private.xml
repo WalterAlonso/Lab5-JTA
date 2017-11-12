@@ -2,6 +2,20 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/E:/Proyectos/cupidos/Lab5/Lab5JTA/Lab3-MueblesDeLosAlpes-ejb/src/java/com/losalpes/servicios/IServicioCarritoMockLocal.java</file>
+            <file>file:/E:/Proyectos/cupidos/Lab5/Lab5JTA/Lab3-MueblesDeLosAlpes-ejb/src/java/com/losalpes/servicios/ServicioCarritoMock.java</file>
+            <file>file:/E:/Proyectos/cupidos/Lab5/Lab5JTA/Lab3-MueblesDeLosAlpes-ejb/src/java/com/losalpes/servicios/IPersistenciaBMTMockRemote.java</file>
+            <file>file:/E:/Proyectos/cupidos/Lab5/Lab5JTA/Lab3-MueblesDeLosAlpes-ejb/src/java/com/losalpes/servicios/ServicioVendedoresMock.java</file>
+            <file>file:/E:/Proyectos/cupidos/Lab5/Lab5JTA/Lab3-MueblesDeLosAlpes-ejb/test/com/losalpes/pojos/PojoTest.java</file>
+            <file>file:/E:/Proyectos/cupidos/Lab5/Lab5JTA/Lab3-MueblesDeLosAlpes-ejb/src/java/com/losalpes/servicios/IPersistenciaCMTMockRemote.java</file>
+            <file>file:/E:/Proyectos/cupidos/Lab5/Lab5JTA/Lab3-MueblesDeLosAlpes-ejb/src/java/com/losalpes/servicios/PersistenciaBMT.java</file>
+            <file>file:/E:/Proyectos/cupidos/Lab5/Lab5JTA/Lab3-MueblesDeLosAlpes-ejb/src/java/com/losalpes/servicios/IPersistenciaBMTMockLocal.java</file>
+            <file>file:/E:/Proyectos/cupidos/Lab5/Lab5JTA/Lab3-MueblesDeLosAlpes-ejb/src/java/com/losalpes/servicios/IPersistenciaCMTMockLocal.java</file>
+            <file>file:/E:/Proyectos/cupidos/Lab5/Lab5JTA/Lab3-MueblesDeLosAlpes-ejb/test/com/losalpes/servicios/PersistenciaBMTTest.java</file>
+            <file>file:/E:/Proyectos/cupidos/Lab5/Lab5JTA/Lab3-MueblesDeLosAlpes-ejb/src/java/com/losalpes/excepciones/CupoInsuficienteException.java</file>
+            <file>file:/E:/Proyectos/cupidos/Lab5/Lab5JTA/Lab3-MueblesDeLosAlpes-ejb/src/java/com/losalpes/servicios/PersistenciaCMT.java</file>
+            <file>file:/E:/Proyectos/cupidos/Lab5/Lab5JTA/Lab3-MueblesDeLosAlpes-ejb/src/java/com/losalpes/servicios/IServicioCarritoMockRemote.java</file>
+        </group>
     </open-files>
 </project-private>
