@@ -65,7 +65,7 @@ public class PersistenciaCMTTest {
         }
     }
 
-    @Test
+      @Test
     public void testComprar_TransaccionSatisfactoria() throws OperacionInvalidaException {        
         Usuario usuario = crearUsuario("user");
         Mueble mueble = crearMueble(1000, 1);
@@ -82,7 +82,7 @@ public class PersistenciaCMTTest {
         servicioCMTRemoto.comprar(v);
         
         TarjetaCreditoAlpes tarjet = buscarTarjetaUsuario(usuario);
-        assertEquals(999, tarjet.getCupo());
+        assertEquals(999.0, tarjet.getCupo(),0);
     }
 
     /**
@@ -91,12 +91,12 @@ public class PersistenciaCMTTest {
    @Test
     public void testComprar_TransaccionConCupoInsuficiente() throws OperacionInvalidaException {
         Usuario usuario = crearUsuario("user");
-        Mueble mueble = crearMueble(1000, 1);
-        crearTarjeta(usuario, 1000);
+        Mueble mueble = crearMueble(11, 1);
+        crearTarjeta(usuario, 10);
         
         //Se crea la venta        
         RegistroVenta v = new RegistroVenta();
-        v.setCantidad(1000);
+        v.setCantidad(11);
         v.setCiudad("Bogota");
         v.setComprador(usuario);
         v.setProducto(mueble);
@@ -105,7 +105,7 @@ public class PersistenciaCMTTest {
         servicioCMTRemoto.comprar(v);
         
         TarjetaCreditoAlpes tarjet = buscarTarjetaUsuario(usuario);
-        assertEquals(1000, tarjet.getCupo());
+        assertEquals(10.0, tarjet.getCupo(),0);
     }
     
     @Test

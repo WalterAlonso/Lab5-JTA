@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -116,8 +117,14 @@ public class ServicioPersistenciaDerby implements IServicioPersistenciaDerbyMock
     }
     
     public java.lang.Object findSingleByQuery(String sql) {
-         Query query = entity.createQuery(sql);
-        Object result = query.getSingleResult();
+        Object result = null;
+        try {
+         Query query = entity.createQuery(sql);         
+        result = query.getSingleResult();
+        }
+        catch(NoResultException ex){
+            return null;
+        }
         return result;
     }
 }
