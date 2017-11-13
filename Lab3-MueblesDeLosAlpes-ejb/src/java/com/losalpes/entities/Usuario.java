@@ -130,19 +130,20 @@ public class Usuario implements Serializable
     {
 
     }
-
-    /**
-     * Constructor de la clase con argumentos
-     * @param nombre Nombre del usuario
-     * @param contraseña Constraseña del usuario
-     * @param tipo Tipo de usuario
-     */
-    public Usuario(String login, String contraseña, TipoUsuario tipoUsuario)
-    {
+    
+    public Usuario(String login, String contraseña, TipoUsuario tipoUsuario, String nombreCompleto, long documento, TipoDocumento tipoDocumento, long telefonoLocal, long telefonoCelular, Ciudad ciudad, String direccion, Profesion profesion, String correo) {
         this.login = login;
         this.contraseña = contraseña;
         this.tipoUsuario = tipoUsuario;
-
+        this.nombreCompleto = nombreCompleto;
+        this.documento = documento;
+        this.tipoDocumento = tipoDocumento;
+        this.telefonoLocal = telefonoLocal;
+        this.telefonoCelular = telefonoCelular;
+        this.ciudad = ciudad;
+        this.direccion = direccion;
+        this.profesion = profesion;
+        this.correo = correo;     
     }
 
     //-----------------------------------------------------------

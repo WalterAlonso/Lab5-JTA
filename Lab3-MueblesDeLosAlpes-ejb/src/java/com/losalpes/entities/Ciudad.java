@@ -14,6 +14,8 @@ package com.losalpes.entities;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
 /**
  * Clase que representa una ciudad en el sistema
@@ -32,6 +34,13 @@ public class Ciudad implements Serializable
     @Id
     private String nombre;
 
+    /**
+     * Producto vendido
+     */
+    @OneToOne
+    @JoinColumn(name="FK_PAIS")
+    private Pais pais;
+    
     /**
      * Devuelve el nombre de la ciudad
      * @return nombre Nombre de la ciudad

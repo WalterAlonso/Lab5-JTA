@@ -17,12 +17,13 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  * Implementación de los servicios de persistencia
  */
 @Stateless
-public class ServicioPersistencia implements IServicioPersistenciaMockLocal{
+public class ServicioPersistencia implements IServicioPersistenciaMockLocal, IServicioPersistenciaMockRemote {
 
     //-----------------------------------------------------------
     // Atributos
@@ -106,5 +107,11 @@ public class ServicioPersistencia implements IServicioPersistenciaMockLocal{
 
      return entity.find(c, id);
     
+    }
+    
+    public List<Object[]> findByQuery(String sql) {
+        Query query = entity.createQuery(sql);
+        List<Object[]> results = query.getResultList();
+        return results;
     }
 }

@@ -13,6 +13,7 @@
 package com.losalpes.servicios;
 
 import com.losalpes.excepciones.OperacionInvalidaException;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -55,5 +56,7 @@ public interface IServicioPersistenciaMockLocal
      * @return obj Resultado de la consulta.
      */
     public java.lang.Object findById(java.lang.Class c, java.lang.Object id);
+    
+    public List<Object[]> findByQuery(String sql);
     
 }
