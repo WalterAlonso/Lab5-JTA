@@ -6,6 +6,7 @@
 package com.losalpes.servicios;
 
 import com.losalpes.entities.Pais;
+import com.losalpes.entities.Vendedor;
 import java.util.Properties;
 import javax.naming.InitialContext;
 import static org.junit.Assert.assertEquals;
@@ -17,12 +18,12 @@ import org.junit.Test;
  * @author WAlonsoR
  */
 public class PersistenciaCMTTest {
-    
+
     /**
      * Interface con referencia al servicio de BMT en el sistema
      */
     private IPersistenciaCMTMockRemote servicioCMTRemoto;
-    
+
     @Before
     public void setUp() throws Exception {
         try {
@@ -40,15 +41,38 @@ public class PersistenciaCMTTest {
             throw new Exception(e.getMessage());
         }
     }
-    
+
     @Test
     public void testInsertar() throws Exception {
 
         Pais pais = new Pais();
         pais.setNombre("Venezuela");
-        int actual = servicioCMTRemoto.findAll(Pais.class).size();
-        servicioCMTRemoto.create(pais);
-        int esperado = servicioCMTRemoto.findAll(Pais.class).size();
+        int actual = servicioCMTRemoto.length(Pais.class);
+        System.out.println("Actual: " + actual);
+        servicioCMTRemoto.insertar(pais);
+        int esperado = servicioCMTRemoto.length(Pais.class);
+        System.out.println("Esperado: " + esperado);
+        assertEquals(esperado, actual + 1);
+    }
+
+    @Test
+    public void testInsertarVendedor() throws Exception {
+
+        Vendedor vendedor = new Vendedor();
+
+        vendedor.setNombres("Juan");
+        vendedor.setApellidos("Paz");
+        vendedor.setComisionVentas(0.2);
+        vendedor.setFoto("Foto Vendedor");
+        vendedor.setIdentificacion(1018445022);
+        vendedor.setPerfil("jspaz");
+        vendedor.setSalario(12000000);
+
+        int actual = servicioCMTRemoto.length(Vendedor.class);
+        System.out.println("Actual: " + actual);
+        servicioCMTRemoto.insertar(vendedor);
+        int esperado = servicioCMTRemoto.length(Vendedor.class);
+        System.out.println("Esperado: " + esperado);
         assertEquals(esperado, actual + 1);
     }
 }

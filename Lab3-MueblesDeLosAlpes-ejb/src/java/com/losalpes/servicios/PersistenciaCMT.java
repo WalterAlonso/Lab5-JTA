@@ -11,8 +11,11 @@ import com.losalpes.entities.Vendedor;
 import com.losalpes.excepciones.CupoInsuficienteException;
 import com.losalpes.excepciones.OperacionInvalidaException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
 import javax.ejb.SessionContext;
@@ -33,126 +36,97 @@ public class PersistenciaCMT implements IPersistenciaCMTMockLocal, IPersistencia
     /**
      * La entidad encargada de persistir en la base de datos
      */
-    @PersistenceContext(unitName = "Lab3-MueblesDeLosAlpes-ejbPUOracle")
-    private EntityManager ventas;
+    @EJB
+    private IServicioPersistenciaMockLocal persistenciaOracle;
+    @EJB
+    private IServicioPersistenciaDerbyMockLocal persistenciaDerby;
 
+    //@PersistenceContext(unitName = "Lab3-MueblesDeLosAlpes-ejbPUOracle")
+    //private EntityManager ventas;
     /**
      * La entidad encargada de persistir en la base de datos
      */
-    @PersistenceContext(unitName = "Lab3-MueblesDeLosAlpes-ejbPUDerby")
-    private EntityManager tarjeta;
-    
+    //@PersistenceContext(unitName = "Lab3-MueblesDeLosAlpes-ejbPUDerby")
+    //private EntityManager tarjeta;
     @PostConstruct
     public void postConstruct() {
-        
+
     }
-    
+
     @Resource
     private SessionContext context;
-    
+
+    @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED) //este se podria omitir
     public void comprar(RegistroVenta venta) {
         try {
-            ventas.persist(venta);
+            persistenciaOracle.create(venta);
+//            ventas.persist(venta);
             DescontarCupoTarjeta(venta);
-            
-        } catch (CupoInsuficienteException e) {
+
+        } catch (OperacionInvalidaException ex) {
             context.setRollbackOnly();
         }
     }
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
 
-    private void DescontarCupoTarjeta(RegistroVenta venta) throws CupoInsuficienteException {
-        double valorTotal = venta.getProducto().getPrecio() * venta.getCantidad();
-        TarjetaCreditoAlpes tarjetaCredito = venta.getComprador().getTarjetaCreditoAlpes();
-        double saldoEnTargeta = tarjetaCredito.getCupo() - valorTotal;
-        tarjetaCredito.setCupo(saldoEnTargeta);
-        tarjeta.persist(tarjetaCredito);
-        if (tarjetaCredito.getCupo() < 0) {
-            throw new CupoInsuficienteException();
+    @Override
+    public void DescontarCupoTarjeta(RegistroVenta venta) {
+
+        try {
+            double valorTotal = venta.getProducto().getPrecio() * venta.getCantidad();
+            TarjetaCreditoAlpes tarjetaCredito = venta.getComprador().getTarjetaCreditoAlpes();
+            double saldoEnTargeta = tarjetaCredito.getCupo() - valorTotal;
+            tarjetaCredito.setCupo(saldoEnTargeta);
+            persistenciaDerby.create(tarjetaCredito);
+            //tarjeta.persist(tarjetaCredito);
+            if (tarjetaCredito.getCupo() < 0) {
+                throw new CupoInsuficienteException();
+            }
+        } catch (OperacionInvalidaException ex) {
+            context.setRollbackOnly();
+        } catch (CupoInsuficienteException ex) {
+            context.setRollbackOnly();
         }
+
     }
 
-    /**
-     * metodos de persistencia normales *
-     */
-    /**
-     * Permite crear un objeto dentro de la persistencia del sistema.
-     *
-     * @param obj Objeto que representa la instancia de la entidad que se quiere
-     * crear.
-     */
-    public void create(Object obj) {
-        ventas.persist(obj);
-    }
-
-    /**
-     * Permite modificar un objeto dentro de la persistencia del sistema.
-     *
-     * @param obj Objeto que representa la instancia de la entidad que se quiere
-     * modificar.
-     */
-    public void update(Object obj) {
-        ventas.merge(obj);
-    }
-
-    /**
-     * Permite borrar un objeto dentro de la persistencia del sistema.
-     *
-     * @param obj Objeto que representa la instancia de la entidad que se quiere
-     * borrar.
-     */
-    public void delete(Object obj) {
-        ventas.remove(obj);
-    }
-
-    /**
-     * Retorna la lista de todos los elementos de una clase dada que se
-     * encuentran en el sistema.
-     *
-     * @param c Clase cuyos objetos quieren encontrarse en el sistema.
-     * @return list Listado de todos los objetos de una clase dada que se
-     * encuentran en el sistema.
-     */
-    public List findAll(Class c) {
-        return ventas.createQuery("select O from " + c.getSimpleName() + " as O").getResultList();
-    }
-
-    /**
-     * Retorna la instancia de una entidad dado un identificador y la clase de
-     * la entidadi.
-     *
-     * @param c Clase de la instancia que se quiere buscar.
-     * @param id Identificador unico del objeto.
-     * @return obj Resultado de la consulta.
-     */
-    public Object findById(Class c, Object id) {
-        return ventas.find(c, id);
-    }
-    
     public void insertarVendedor(Vendedor vendedor) {
         try {
-            create(vendedor);
+            persistenciaOracle.create(vendedor);
         } catch (Exception e) {
             context.setRollbackOnly();
         }
     }
-    
+
     public void eliminarVendedor(Vendedor vendedor) {
         try {
-            delete(vendedor);
+            persistenciaOracle.delete(vendedor);
         } catch (Exception e) {
             context.setRollbackOnly();
         }
     }
-    
+
     public void insertarTC(TarjetaCreditoAlpes tc) {
         try {
-            tarjeta.persist(tc);
+            persistenciaDerby.create(tc);
         } catch (Exception e) {
             context.setRollbackOnly();
         }
     }
-    
+
+    public void insertar(Object obj) {
+        
+        try {
+            persistenciaOracle.create(obj);
+        } catch (Exception e) {
+            context.setRollbackOnly();
+        }
+    }
+
+    public int length(Class c) {
+        return persistenciaOracle.findAll(c).size();
+    }
+
 }
