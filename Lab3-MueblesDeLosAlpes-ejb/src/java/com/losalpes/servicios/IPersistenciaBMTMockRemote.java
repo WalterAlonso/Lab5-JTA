@@ -6,6 +6,7 @@
 package com.losalpes.servicios;
 
 import com.losalpes.entities.RegistroVenta;
+import com.losalpes.entities.TarjetaCreditoAlpes;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -49,4 +50,8 @@ public interface IPersistenciaBMTMockRemote {
      * @return Object Variable tipo Object
      */
     public Object findById(Class c, Object id);   
+    
+    public void insertarTC(TarjetaCreditoAlpes tc);   
+    
+    public List findAllTC();
 }

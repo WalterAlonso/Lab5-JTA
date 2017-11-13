@@ -1,7 +1,10 @@
 /Lab3-MueblesDeLosAlpes-ejb/build/
+/Lab3-MueblesDeLosAlpes-ejb/nbproject/
+/Lab3-MueblesDeLosAlpes-war/nbproject/
 /Lab3-MueblesDeLosAlpes-ejb/dist/
 /Lab3-MueblesDeLosAlpes-war/dist/
 /dist/
+/nbproject/
 
 /Lab3-MueblesDeLosAlpes-ejb/src/conf/META-INF/glassfish-resources.xml
 /Lab3-MueblesDeLosAlpes-war/build/

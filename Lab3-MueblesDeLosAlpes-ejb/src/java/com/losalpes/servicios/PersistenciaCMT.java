@@ -41,7 +41,7 @@ public class PersistenciaCMT implements IPersistenciaCMTMockLocal, IPersistencia
      */
     @PersistenceContext(unitName = "Lab3-MueblesDeLosAlpes-ejbPUDerby")
     private EntityManager tarjeta;
-
+    
     @PostConstruct
     public void postConstruct() {
         
@@ -146,4 +146,13 @@ public class PersistenciaCMT implements IPersistenciaCMTMockLocal, IPersistencia
             context.setRollbackOnly();
         }
     }
+    
+    public void insertarTC(TarjetaCreditoAlpes tc) {
+        try {
+            tarjeta.persist(tc);
+        } catch (Exception e) {
+            context.setRollbackOnly();
+        }
+    }
+    
 }

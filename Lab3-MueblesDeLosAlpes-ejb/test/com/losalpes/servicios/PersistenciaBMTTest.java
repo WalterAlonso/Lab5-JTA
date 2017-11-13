@@ -39,23 +39,18 @@ public class PersistenciaBMTTest {
      * Método que se ejecuta antes de comenzar la prueba unitaria Se encarga de
      * inicializar todo lo necesario para la prueba
      */
-    
-     /**
+    /**
      * Interface con referencia al servicio de BMT en el sistema
      */
     private IPersistenciaBMTMockRemote servicioBMTRemoto;
-
-    private IPersistenciaBMTMockLocal servicioBMTLocal;
     
     private IServicioPersistenciaMockRemote servicioOracle;
 
     private IServicioPersistenciaDerbyMockRemote servicioDerby;
-    
-    
+
     @Before
-    public void setUp() throws Exception  {
-        try
-        {
+    public void setUp() throws Exception {
+        try {
             Properties env = new Properties();
             env.put("java.naming.factory.initial", "com.sun.enterprise.naming.SerialInitContextFactory");
             env.put("java.naming.factory.url.pkgs", "com.sun.enterprise.naming");
@@ -64,19 +59,18 @@ public class PersistenciaBMTTest {
             contexto = new InitialContext(env);
             servicioBMTRemoto = (IPersistenciaBMTMockRemote) contexto.lookup("com.losalpes.servicios.IPersistenciaBMTMockRemote");
             servicioOracle = (IServicioPersistenciaMockRemote) contexto.lookup("com.losalpes.servicios.IServicioPersistenciaMockRemote");
-            servicioDerby = (IServicioPersistenciaDerbyMockRemote) contexto.lookup("com.losalpes.servicios.IServicioPersistenciaDerbyMockRemote");            
-            
+            servicioDerby = (IServicioPersistenciaDerbyMockRemote) contexto.lookup("com.losalpes.servicios.IServicioPersistenciaDerbyMockRemote");
+
             initDataBase();
-        } 
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
-    
+
     public void initDataBase() {
-        
-    }    
+
+    }
+
     /**
      * Método que se ejecuta después de haber ejecutado la prueba
      */
@@ -94,7 +88,7 @@ public class PersistenciaBMTTest {
     @Test
     public void testComprar_TransaccionSatisfactoria() throws OperacionInvalidaException {
         System.out.println("comprar");
-       
+
         List a = servicioOracle.findAll(Pais.class);
         Ciudad bog = new Ciudad();
         bog.setNombre("Bogota");
@@ -111,15 +105,15 @@ public class PersistenciaBMTTest {
         
         
         List b = servicioDerby.findAll(TarjetaCreditoAlpes.class);
+        
         //la tarjeta con cupo de 10000
-        TarjetaCreditoAlpes tarjeta = new TarjetaCreditoAlpes("pepito", "Bancolombia", 10000, new Date(2017,01,15), new Date(2019,01,15), "user");
+        TarjetaCreditoAlpes tarjeta = new TarjetaCreditoAlpes("pepito", "Bancolombia", 10000, new Date(2017, 01, 15), new Date(2019, 01, 15), "user");
         servicioDerby.create(tarjeta);
-        
-        
+
         ArrayList<Mueble> muebles = new ArrayList();
         Mueble m1 = new Mueble(1L, "Silla clásica", "Una confortable silla con estilo del siglo XIX.", TipoMueble.Interior, 45, "sillaClasica", 123);
         servicioOracle.create(m1);
-        
+
         //Define el mueble
         RegistroVenta v = new RegistroVenta();
         v.setCantidad(1);
@@ -133,9 +127,9 @@ public class PersistenciaBMTTest {
         
         servicioBMTRemoto.comprar(v);
         //se obtiene la venta
-        
+
         String query = "Select c FROM TarjetaCreditoAlpes c "
-                        + "Where c.LOGIN = '" + usuario.getLogin()+"'";
+            + "Where c.LOGIN = '" + usuario.getLogin()+"'";
                  
         //var tarjet = derby.findByQuery(query, cantidad);
         List<Object[]> list = servicioDerby.findByQuery(query);
@@ -147,7 +141,7 @@ public class PersistenciaBMTTest {
     /**
      * Prueba para agregar un mueble en el sistema
      */
-    /*@Test
+    @Test
     public void testComprar_TransaccionConCupoInsuficiente() {
         System.out.println("comprar");
         PersistenciaBMT instance = new PersistenciaBMT();
@@ -164,16 +158,44 @@ public class PersistenciaBMTTest {
         instance.comprar(v);
         //se obtiene la venta        
         //assertEquals(esperado,actual+1);
-    }*/
-    
-    //@Test
-    public void testInsertar() {
-       /* PersistenciaBMT instance = new PersistenciaBMT();
+    }
+
+    @Test
+    public void testInsertar() throws Exception {
+
+        Pais pais = new Pais();
+        pais.setNombre("Venezuela");
+        int actual = servicioBMTRemoto.findAll(Pais.class).size();
+        servicioBMTRemoto.create(pais);
+        int esperado = servicioBMTRemoto.findAll(Pais.class).size();
+        assertEquals(esperado, actual + 1);
+    }
+
+    @Test
+    public void testInsertarTC() throws Exception {
+        TarjetaCreditoAlpes tc = new TarjetaCreditoAlpes();
+        tc.setBanco("Col");
+        tc.setCupo(3200000);
+        tc.setFechaExpedicion(new Date());
+        tc.setFechaVencimiento(new Date());
+        tc.setLogin("admin");
+        tc.setNombreTitular("Juan Paz");
+        tc.setNumero(Long.getLong("123143241231"));
+
+        int actual = servicioBMTRemoto.findAllTC().size();
+        System.out.println("Actual: " + actual);
+        servicioBMTRemoto.insertarTC(tc);
+        int esperado = servicioBMTRemoto.findAllTC().size();
+        System.out.println("Actual: " + esperado);
+        assertEquals(esperado, actual + 1);
+    }
+
+    @Test
+    public void testSome() {
+
         Pais pais = new Pais();
         pais.setNombre("Colombia");
-        int actual = instance.findAll(Pais.class).size();
-        instance.create(pais);
-        int esperado = instance.findAll(Pais.class).size();
-        assertEquals(esperado, actual + 1);*/
+
+        assertEquals("Colombia", pais.getNombre());
     }
 }
