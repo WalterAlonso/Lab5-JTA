@@ -45,6 +45,8 @@ public class PersistenciaBMTTest {
      */
     private IPersistenciaBMTMockRemote servicioBMTRemoto;
 
+    private IPersistenciaBMTMockLocal servicioBMTLocal;
+    
     private IServicioPersistenciaMockRemote servicioOracle;
 
     private IServicioPersistenciaDerbyMockRemote servicioDerby;
@@ -101,14 +103,14 @@ public class PersistenciaBMTTest {
         Pais pais = new Pais();
         pais.setNombre("Colombia");
         pais.setCiudades(ciudades);
-        //servicioOracle.create(pais);
+        servicioOracle.create(pais);
         
         //define usuario:      
         Usuario usuario = new Usuario("user", "pepito", TipoUsuario.Cliente, "peipto p", 1014207335, TipoDocumento.CC, 4300012, 301309301, bog, "dg", Profesion.Administrador, "correotest@g.com");
-        //servicioOracle.create(usuario);
+        servicioOracle.create(usuario);
         
         
-        
+        List b = servicioDerby.findAll(TarjetaCreditoAlpes.class);
         //la tarjeta con cupo de 10000
         TarjetaCreditoAlpes tarjeta = new TarjetaCreditoAlpes("pepito", "Bancolombia", 10000, new Date(2017,01,15), new Date(2019,01,15), "user");
         servicioDerby.create(tarjeta);
@@ -126,11 +128,14 @@ public class PersistenciaBMTTest {
         v.setProducto(m1);
         v.setRegistro(1);
         
+        PersistenciaBMT p = new PersistenciaBMT();
+        p.comprar(v);
+        
         servicioBMTRemoto.comprar(v);
         //se obtiene la venta
         
         String query = "Select c FROM TarjetaCreditoAlpes c "
-                        + "Where c.login = " + usuario.getLogin();
+                        + "Where c.LOGIN = '" + usuario.getLogin()+"'";
                  
         //var tarjet = derby.findByQuery(query, cantidad);
         List<Object[]> list = servicioDerby.findByQuery(query);

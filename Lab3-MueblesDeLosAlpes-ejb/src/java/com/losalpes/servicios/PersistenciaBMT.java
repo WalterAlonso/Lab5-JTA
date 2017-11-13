@@ -83,7 +83,8 @@ public class PersistenciaBMT implements IPersistenciaBMTMockLocal, IPersistencia
             commitTransaction();
         } catch (CupoInsuficienteException e) {
             rollbackTransaction();
-
+        } catch(Exception ex){
+            throw ex;
         }
     }
 
