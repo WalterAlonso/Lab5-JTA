@@ -42,6 +42,20 @@ public class TarjetaCreditoAlpes implements Serializable {
     
     @Column(nullable=false)
     private String login;
+    
+    public TarjetaCreditoAlpes(){
+        
+    }
+    
+    public TarjetaCreditoAlpes(String nombreTitular, String banco, double cupo, Date fechaExpedicion, 
+            Date fechaVencimiento, String login){
+        this.nombreTitular = nombreTitular;
+        this.banco = banco;
+        this.cupo = cupo;
+        this.fechaExpedicion = fechaExpedicion;
+        this.fechaVencimiento = fechaVencimiento;
+        this.login = login;
+    }
 
     public Long getNumero() {
         return numero;
