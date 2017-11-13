@@ -75,11 +75,12 @@ public class ServicioPersistencia implements IServicioPersistenciaMockLocal, ISe
     /**
      * Permite borrar un objeto dentro de la persistencia del sistema.
      * @param obj Objeto que representa la instancia de la entidad que se quiere borrar.
+     * @throws com.losalpes.excepciones.OperacionInvalidaException
      */
     @Override
-    public void delete(Object obj) throws OperacionInvalidaException
+    public void delete(Object obj)
     {
-        entity.remove(obj);
+        entity.remove(entity.merge(obj));
 
     }
 

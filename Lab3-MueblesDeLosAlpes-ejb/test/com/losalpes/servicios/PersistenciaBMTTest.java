@@ -15,6 +15,7 @@ import com.losalpes.entities.TipoDocumento;
 import com.losalpes.entities.TipoMueble;
 import com.losalpes.entities.TipoUsuario;
 import com.losalpes.entities.Usuario;
+import com.losalpes.entities.Vendedor;
 import com.losalpes.excepciones.OperacionInvalidaException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,12 +25,15 @@ import javax.naming.InitialContext;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  *
  * @author WAlonsoR
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PersistenciaBMTTest {
 
     //-----------------------------------------------------------
@@ -191,11 +195,34 @@ public class PersistenciaBMTTest {
     }
 
     @Test
-    public void testSome() {
+    public void testInsertarVendedor() throws Exception {
 
-        Pais pais = new Pais();
-        pais.setNombre("Colombia");
+        Vendedor vendedor = new Vendedor();
 
-        assertEquals("Colombia", pais.getNombre());
+        vendedor.setNombres("Juan");
+        vendedor.setApellidos("Paz");
+        vendedor.setComisionVentas(0.2);
+        vendedor.setFoto("Foto Vendedor");
+        vendedor.setIdentificacion(1018445022);
+        vendedor.setPerfil("jspaz");
+        vendedor.setSalario(12000000);
+
+        int actual = servicioBMTRemoto.length(Vendedor.class);
+        System.out.println("Actual: " + actual);
+        servicioBMTRemoto.insertarVendedor(vendedor);
+        int esperado = servicioBMTRemoto.length(Vendedor.class);
+        System.out.println("Esperado: " + esperado);
+        assertEquals(esperado, actual + 1);
+    }
+
+    @Test
+    public void testVendedorEliminar() throws Exception {
+        long idVendedor = 1018445022;
+
+        Vendedor vendedor = servicioBMTRemoto.buscarVendedor(idVendedor);
+        int actual = servicioBMTRemoto.length(Vendedor.class);
+        servicioBMTRemoto.eliminarVendedor(vendedor);
+        int esperado = servicioBMTRemoto.length(Vendedor.class);
+        assertEquals(esperado, actual - 1);
     }
 }

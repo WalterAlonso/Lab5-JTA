@@ -38,5 +38,7 @@ public interface IPersistenciaCMTMockLocal {
     public void eliminarVendedor(Vendedor vendedor);
 
     public int length(Class c);
+    
+    public Vendedor buscarVendedor(long id);
 
 }

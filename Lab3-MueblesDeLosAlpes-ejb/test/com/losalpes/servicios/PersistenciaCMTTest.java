@@ -11,12 +11,15 @@ import java.util.Properties;
 import javax.naming.InitialContext;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  *
  * @author WAlonsoR
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PersistenciaCMTTest {
 
     /**
@@ -70,9 +73,20 @@ public class PersistenciaCMTTest {
 
         int actual = servicioCMTRemoto.length(Vendedor.class);
         System.out.println("Actual: " + actual);
-        servicioCMTRemoto.insertar(vendedor);
+        servicioCMTRemoto.insertarVendedor(vendedor);
         int esperado = servicioCMTRemoto.length(Vendedor.class);
         System.out.println("Esperado: " + esperado);
         assertEquals(esperado, actual + 1);
+    }
+
+    @Test
+    public void testVendedorEliminar() throws Exception {
+        long idVendedor = 1018445022;
+
+        Vendedor vendedor = servicioCMTRemoto.buscarVendedor(idVendedor);
+        int actual = servicioCMTRemoto.length(Vendedor.class);
+        servicioCMTRemoto.eliminarVendedor(vendedor);
+        int esperado = servicioCMTRemoto.length(Vendedor.class);
+        assertEquals(esperado, actual - 1);
     }
 }

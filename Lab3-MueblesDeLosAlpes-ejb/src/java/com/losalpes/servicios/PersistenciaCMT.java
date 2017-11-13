@@ -100,6 +100,10 @@ public class PersistenciaCMT implements IPersistenciaCMTMockLocal, IPersistencia
         }
     }
 
+    public Vendedor buscarVendedor(long id) {
+        return (Vendedor) persistenciaOracle.findById(Vendedor.class, id);
+    }
+
     public void eliminarVendedor(Vendedor vendedor) {
         try {
             persistenciaOracle.delete(vendedor);
@@ -117,7 +121,7 @@ public class PersistenciaCMT implements IPersistenciaCMTMockLocal, IPersistencia
     }
 
     public void insertar(Object obj) {
-        
+
         try {
             persistenciaOracle.create(obj);
         } catch (Exception e) {

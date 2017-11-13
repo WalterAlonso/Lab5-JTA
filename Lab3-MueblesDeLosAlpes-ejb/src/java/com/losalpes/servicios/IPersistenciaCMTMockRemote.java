@@ -27,7 +27,7 @@ public interface IPersistenciaCMTMockRemote {
     public void comprar(RegistroVenta venta);
 
     public void insertarTC(TarjetaCreditoAlpes tc);
-    
+
     public void insertar(Object obj);
 
     public void DescontarCupoTarjeta(RegistroVenta venta);
@@ -35,7 +35,9 @@ public interface IPersistenciaCMTMockRemote {
     public void insertarVendedor(Vendedor vendedor);
 
     public void eliminarVendedor(Vendedor vendedor);
-    
+
     public int length(Class c);
+
+    public Vendedor buscarVendedor(long id);
 
 }
