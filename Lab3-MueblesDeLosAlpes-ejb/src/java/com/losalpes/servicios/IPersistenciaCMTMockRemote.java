@@ -6,12 +6,15 @@
 package com.losalpes.servicios;
 
 import com.losalpes.entities.RegistroVenta;
+import com.losalpes.entities.TarjetaCreditoAlpes;
 import java.util.List;
+import javax.ejb.Remote;
 
 /**
  *
  * @author WALTER
  */
+@Remote
 public interface IPersistenciaCMTMockRemote {
      /**
      * Metodo para crear el objeto de compra, vcalida contra la bd de Derby el cupo de tarjeta.
@@ -47,4 +50,8 @@ public interface IPersistenciaCMTMockRemote {
      * @return Object Variable tipo Object
      */
     public Object findById(Class c, Object id);   
+    
+    public void insertarTC(TarjetaCreditoAlpes tc);   
+    
+    
 }

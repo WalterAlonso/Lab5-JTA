@@ -19,6 +19,7 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.transaction.NotSupportedException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
@@ -147,7 +148,9 @@ public class PersistenciaBMT implements IPersistenciaBMTMockLocal, IPersistencia
      * encuentran en el sistema.
      */
     public List findAll(Class c) {
-        return ventas.createQuery("select O from " + c.getSimpleName() + " as O").getResultList();
+        Query query = ventas.createQuery("select O from " + c.getSimpleName() + " as O");
+        List result = query.getResultList();
+        return result;
     }
 
     /**
@@ -180,5 +183,17 @@ public class PersistenciaBMT implements IPersistenciaBMTMockLocal, IPersistencia
         } catch (Exception e) {
             rollbackTransaction();
         }
+    }
+    
+    public void insertarTC(TarjetaCreditoAlpes tc) {
+        try {
+            tarjeta.persist(tc);
+        } catch (Exception e) {
+            rollbackTransaction();
+        }
+    }
+    
+    public List findAllTC() {
+        return tarjeta.createQuery("select O from TarjetaCreditoAlpes as O").getResultList();
     }
 }
