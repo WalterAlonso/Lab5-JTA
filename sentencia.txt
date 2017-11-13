@@ -2,7 +2,7 @@ create table "APP".TARJETACREDITOALPES
 (
 	NUMERO BIGINT not null primary key,
 	BANCO VARCHAR(255) not null,
-	CUPO INTEGER not null,
+	CUPO DOUBLE not null,
 	FECHAEXPEDICION TIMESTAMP not null,
 	FECHAVENCIMIENTO TIMESTAMP not null,
 	LOGIN VARCHAR(255) not null,
