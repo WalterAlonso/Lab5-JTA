@@ -7,6 +7,7 @@ package com.losalpes.servicios;
 
 import com.losalpes.entities.RegistroVenta;
 import com.losalpes.entities.TarjetaCreditoAlpes;
+import com.losalpes.entities.Vendedor;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -16,42 +17,44 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface IPersistenciaCMTMockRemote {
-     /**
-     * Metodo para crear el objeto de compra, vcalida contra la bd de Derby el cupo de tarjeta.
-     * @param venta 
+
+   /**
+     * Metodo para crear el objeto de compra, valida contra la bd de Derby el
+     * cupo de tarjeta.
+     *
+     * @param venta
      */
     public void comprar(RegistroVenta venta);
-    
-     /**
-     * Método para crear objetos en la base de datos.
-     * @param obj Variable tipo Object
-     */
-    public void create(Object obj);
+
     /**
-     * Método para actualizar un objeto en la base de datos.
-     * @param obj Variable tipo Object
+     * Inserta vendedor en la base de datos de oracle
+     * @param vendedor 
      */
-    public void update(Object obj);
+    public void insertarVendedor(Vendedor vendedor);
+         
     /**
-     * Método para eliminar un objeto de la base de datos.
-     * @param obj Variable tipo Object
+     * Elimina vendedor en la base de datos de oracle
+     * @param vendedor 
      */
-    public void delete(Object obj);
+    public void eliminarVendedor(Vendedor vendedor);
+    
     /**
-     * Método para retornar todos los objetos de una tabla de la base de datos.
-     * @param c Clase para consultar.
-     * @return List Listado con todos los osbjetos de la tabla.
+     * Busca vendedor
+     * @param id
+     * @return 
      */
-    public List findAll(Class c);
+    public Vendedor buscarVendedor(long id);
+    
     /**
-     * Método para consultar y retornar objetos de una tabla por medio del Id.
-     * @param c Clase para consultar.
-     * @param id String Id del Objeto
-     * @return Object Variable tipo Object
+     * Permite saber la cantidad de registros en entidad
+     * @param c
+     * @return 
      */
-    public Object findById(Class c, Object id);   
-    
-    public void insertarTC(TarjetaCreditoAlpes tc);   
-    
-    
+    public int length(Class c);
+
+    /**
+     * Inserta culquier entidad.
+     * @param obj 
+     */
+    public void insertar(Object obj);
 }

@@ -17,19 +17,44 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface IPersistenciaBMTMockRemote {
+    
     /**
-     * Metodo para crear el objeto de compra, vcalida contra la bd de Derby el
+     * Metodo para crear el objeto de compra, valida contra la bd de Derby el
      * cupo de tarjeta.
      *
      * @param venta
      */
     public void comprar(RegistroVenta venta);
 
+    /**
+     * Inserta vendedor en la base de datos de oracle
+     * @param vendedor 
+     */
     public void insertarVendedor(Vendedor vendedor);
          
+    /**
+     * Elimina vendedor en la base de datos de oracle
+     * @param vendedor 
+     */
     public void eliminarVendedor(Vendedor vendedor);
     
-    public void insertarTC(TarjetaCreditoAlpes tc);
-
-    public List findAllTC();
+    /**
+     * Busca vendedor
+     * @param id
+     * @return 
+     */
+    public Vendedor buscarVendedor(long id);
+    
+    /**
+     * Permite saber la cantidad de registros en entidad
+     * @param c
+     * @return 
+     */
+    public int length(Class c);
+    
+    /**
+     * Inserta culquier entidad.
+     * @param obj 
+     */
+    public void insertar(Object obj);
 }

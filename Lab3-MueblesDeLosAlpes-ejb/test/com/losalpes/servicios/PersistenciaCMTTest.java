@@ -5,23 +5,48 @@
  */
 package com.losalpes.servicios;
 
+import com.losalpes.entities.Ciudad;
+import com.losalpes.entities.Mueble;
 import com.losalpes.entities.Pais;
+import com.losalpes.entities.Profesion;
+import com.losalpes.entities.RegistroVenta;
+import com.losalpes.entities.TarjetaCreditoAlpes;
+import com.losalpes.entities.TipoDocumento;
+import com.losalpes.entities.TipoMueble;
+import com.losalpes.entities.TipoUsuario;
+import com.losalpes.entities.Usuario;
+import com.losalpes.entities.Vendedor;
+import com.losalpes.excepciones.OperacionInvalidaException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Properties;
 import javax.naming.InitialContext;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  *
  * @author WAlonsoR
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PersistenciaCMTTest {
-    
+
     /**
      * Interface con referencia al servicio de BMT en el sistema
      */
     private IPersistenciaCMTMockRemote servicioCMTRemoto;
+    /**
+     * Interface con referencia al servicio de persistencia de oracle
+     */
+    private IServicioPersistenciaMockRemote servicioOracle;
+
+    /**
+     * Interface con referencia al servicio de persistencia de derby
+     */
+    private IServicioPersistenciaDerbyMockRemote servicioDerby;
     
     @Before
     public void setUp() throws Exception {
@@ -33,12 +58,54 @@ public class PersistenciaCMTTest {
             InitialContext contexto;
             contexto = new InitialContext(env);
             servicioCMTRemoto = (IPersistenciaCMTMockRemote) contexto.lookup("com.losalpes.servicios.IPersistenciaCMTMockRemote");
-
-            //Servicio oracle
-            //Servicio Derby
+            servicioOracle = (IServicioPersistenciaMockRemote) contexto.lookup("com.losalpes.servicios.IServicioPersistenciaMockRemote");
+            servicioDerby = (IServicioPersistenciaDerbyMockRemote) contexto.lookup("com.losalpes.servicios.IServicioPersistenciaDerbyMockRemote");            
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
+    }
+
+    @Test
+    public void testComprar_TransaccionSatisfactoria() throws OperacionInvalidaException {        
+        Usuario usuario = crearUsuario("user");
+        Mueble mueble = crearMueble(1000, 1);
+        crearTarjeta(usuario, 1000);
+        
+        //Se crea la venta        
+        RegistroVenta v = new RegistroVenta();
+        v.setCantidad(1);
+        v.setCiudad("Bogota");
+        v.setComprador(usuario);
+        v.setProducto(mueble);
+        v.setRegistro(1);
+                
+        servicioCMTRemoto.comprar(v);
+        
+        TarjetaCreditoAlpes tarjet = buscarTarjetaUsuario(usuario);
+        assertEquals(999, tarjet.getCupo());
+    }
+
+    /**
+     * Prueba para validar el cupo insuficiente
+     */
+   @Test
+    public void testComprar_TransaccionConCupoInsuficiente() throws OperacionInvalidaException {
+        Usuario usuario = crearUsuario("user");
+        Mueble mueble = crearMueble(1000, 1);
+        crearTarjeta(usuario, 1000);
+        
+        //Se crea la venta        
+        RegistroVenta v = new RegistroVenta();
+        v.setCantidad(1000);
+        v.setCiudad("Bogota");
+        v.setComprador(usuario);
+        v.setProducto(mueble);
+        v.setRegistro(1);
+                
+        servicioCMTRemoto.comprar(v);
+        
+        TarjetaCreditoAlpes tarjet = buscarTarjetaUsuario(usuario);
+        assertEquals(1000, tarjet.getCupo());
     }
     
     @Test
@@ -46,9 +113,93 @@ public class PersistenciaCMTTest {
 
         Pais pais = new Pais();
         pais.setNombre("Venezuela");
-        int actual = servicioCMTRemoto.findAll(Pais.class).size();
-        servicioCMTRemoto.create(pais);
-        int esperado = servicioCMTRemoto.findAll(Pais.class).size();
+        int actual = servicioCMTRemoto.length(Pais.class);
+        System.out.println("Actual: " + actual);
+        servicioCMTRemoto.insertar(pais);
+        int esperado = servicioCMTRemoto.length(Pais.class);
+        System.out.println("Esperado: " + esperado);
         assertEquals(esperado, actual + 1);
+    }
+
+    @Test
+    public void testInsertarVendedor() throws Exception {
+
+        Vendedor vendedor = new Vendedor();
+
+        vendedor.setNombres("Juan");
+        vendedor.setApellidos("Paz");
+        vendedor.setComisionVentas(0.2);
+        vendedor.setFoto("Foto Vendedor");
+        vendedor.setIdentificacion(1018445022);
+        vendedor.setPerfil("jspaz");
+        vendedor.setSalario(12000000);
+
+        int actual = servicioCMTRemoto.length(Vendedor.class);
+        System.out.println("Actual: " + actual);
+        servicioCMTRemoto.insertarVendedor(vendedor);
+        int esperado = servicioCMTRemoto.length(Vendedor.class);
+        System.out.println("Esperado: " + esperado);
+        assertEquals(esperado, actual + 1);
+    }
+
+    @Test
+    public void testVendedorEliminar() throws Exception {
+        long idVendedor = 1018445022;
+
+        Vendedor vendedor = servicioCMTRemoto.buscarVendedor(idVendedor);
+        int actual = servicioCMTRemoto.length(Vendedor.class);
+        servicioCMTRemoto.eliminarVendedor(vendedor);
+        int esperado = servicioCMTRemoto.length(Vendedor.class);
+        assertEquals(esperado, actual - 1);
+    }
+    
+    /** Metodos helper **/
+    private Usuario crearUsuario(String login) throws OperacionInvalidaException{
+        Usuario usuario = (Usuario)servicioOracle.findById(Usuario.class, login);
+        if (usuario == null){
+            Ciudad bog = new Ciudad();
+            bog.setNombre("Bogota");
+            ArrayList<Ciudad> ciudades = new ArrayList<>();
+            ciudades.add(bog);
+            Pais pais = new Pais();
+            pais.setNombre("Colombia");
+            pais.setCiudades(ciudades);
+            servicioOracle.create(pais);
+
+            //define usuario:      
+            usuario = new Usuario(login, "pepito", TipoUsuario.Cliente, "peipto p", 1014207335, TipoDocumento.CC, 4300012, 301309301, bog, "dg", Profesion.Administrador, "correotest@g.com");
+            servicioOracle.create(usuario);
+        }
+        return usuario;
+    }
+        
+    private TarjetaCreditoAlpes crearTarjeta(Usuario usuario, double cupo) throws OperacionInvalidaException{                  
+        TarjetaCreditoAlpes tarjeta = buscarTarjetaUsuario(usuario);
+        if (tarjeta == null){
+            tarjeta = new TarjetaCreditoAlpes("pepito", "Bancolombia", cupo, new Date(2017, 01, 15), new Date(2019, 01, 15), usuario.getLogin());
+            servicioDerby.create(tarjeta);
+        } else
+        {
+            tarjeta.setCupo(cupo);
+            servicioDerby.update(tarjeta);
+        }
+        return tarjeta;
+    }
+    
+    
+    private TarjetaCreditoAlpes buscarTarjetaUsuario(Usuario usuario) {
+        TarjetaCreditoAlpes tarjeta =  (TarjetaCreditoAlpes)servicioDerby.findSingleByQuery
+        ("Select c FROM TarjetaCreditoAlpes c "
+                + "Where c.login = '" + usuario.getLogin()+"'");
+        return tarjeta;
+    }
+    
+    private Mueble crearMueble(int cantidad, double precio) throws OperacionInvalidaException{        
+        Mueble m1 = (Mueble)servicioOracle.findById(Mueble.class, 1L);
+        if (m1 == null){
+            m1 = new Mueble(1L, "Silla clásica", "Una confortable silla con estilo del siglo XIX.", TipoMueble.Interior, cantidad, "sillaClasica", precio);
+            servicioOracle.create(m1);
+        }
+        return m1;
     }
 }
