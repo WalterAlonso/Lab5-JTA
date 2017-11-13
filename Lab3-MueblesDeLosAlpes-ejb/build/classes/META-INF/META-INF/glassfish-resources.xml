@@ -16,7 +16,7 @@
         <property name="portNumber" value="1521"/>
         <property name="databaseName" value="XE"/>
         <property name="User" value="system"/>
-        <property name="Password" value="KrapulaWeb2017"/>
+        <property name="Password" value="walter"/>
         <property name="URL" value="jdbc:oracle:thin:@localhost:1521:XE"/>
         <property name="driverClass" value="oracle.jdbc.OracleDriver"/>
     </jdbc-connection-pool>

@@ -10,9 +10,11 @@ import com.losalpes.entities.TarjetaCreditoAlpes;
 import com.losalpes.entities.Vendedor;
 import com.losalpes.excepciones.CupoInsuficienteException;
 import com.losalpes.excepciones.OperacionInvalidaException;
+import java.util.Arrays;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
 import javax.ejb.TransactionManagement;
@@ -34,19 +36,19 @@ public class PersistenciaBMT implements IPersistenciaBMTMockLocal, IPersistencia
 
     @Resource
     private UserTransaction userTransaction;
+    
+    /**
+     * La entidad encargada de persistir en la base de datos
+     */
+    @EJB
+    private IServicioPersistenciaMockLocal servicioOracle;
 
     /**
      * La entidad encargada de persistir en la base de datos
      */
-    @PersistenceContext(unitName = "Lab3-MueblesDeLosAlpes-ejbPUOracle")
-    private EntityManager ventas;
-
-    /**
-     * La entidad encargada de persistir en la base de datos
-     */
-    @PersistenceContext(unitName = "Lab3-MueblesDeLosAlpes-ejbPUDerby")
-    private EntityManager tarjeta;
-
+    @EJB
+    private IServicioPersistenciaDerbyMockLocal servicioDerby;
+    
     @PostConstruct
     public void postConstruct() {
 
@@ -78,25 +80,54 @@ public class PersistenciaBMT implements IPersistenciaBMTMockLocal, IPersistencia
 
     public void comprar(RegistroVenta venta) {
         try {
+            System.out.print("antes init");
             initTransaction();
-            ventas.persist(venta);
+            System.out.print("antes create");
+            servicioOracle.create(venta);
+            System.out.print("antes descontar");
             DescontarCupoTarjeta(venta);
+            System.out.print("antes commit");
             commitTransaction();
         } catch (CupoInsuficienteException e) {
+            System.out.print("excepcion cupoiind");
+            rollbackTransaction();
+        } catch (OperacionInvalidaException e) {
+            System.out.print("excep operacion inva");
             rollbackTransaction();
         } catch(Exception ex){
+            System.out.print("excepcion");
             throw ex;
         }
     }
 
-    private void DescontarCupoTarjeta(RegistroVenta venta) throws CupoInsuficienteException { //,CupoInsuficienteException
+    private void DescontarCupoTarjeta(RegistroVenta venta) throws CupoInsuficienteException, OperacionInvalidaException { //,CupoInsuficienteException
+        System.out.print("antes valor total");
         double valorTotal = venta.getProducto().getPrecio() * venta.getCantidad();
-        TarjetaCreditoAlpes tarjetaCredito = venta.getComprador().getTarjetaCreditoAlpes();
-        double saldoEnTargeta = tarjetaCredito.getCupo() - valorTotal;
-        tarjetaCredito.setCupo(saldoEnTargeta);
-        tarjeta.persist(tarjetaCredito);
-
-        if (tarjetaCredito.getCupo() < 0) {
+        System.out.print("despues valor total");
+        
+        String sql = "SELECT c FROM TarjetaCreditoAlpes c WHERE c.login = '"+venta.getComprador().getLogin()+"'";
+        Object result= servicioDerby.findSingleByQuery(sql);
+        System.out.print("tarjeta.");
+        System.out.print(result);
+        System.out.print("antes convbersion.");
+         TarjetaCreditoAlpes tarjet = (TarjetaCreditoAlpes)result;
+        if(tarjet == null)
+        {
+             System.out.print("No se encontro la tarjeta.");
+             throw new CupoInsuficienteException();
+        }
+        
+        System.out.print("la tarjeta la encomntro.");
+        
+        System.out.print("antes saldo");
+        double saldoEnTargeta = tarjet.getCupo() - valorTotal;
+        System.out.print("antes set cupo");
+        tarjet.setCupo(saldoEnTargeta);
+        System.out.print("antes create tarjeta");
+        servicioDerby.update(tarjet);
+        System.out.print("antes if cupo");
+        if (tarjet.getCupo() < 0) {
+            System.out.print("antes lanzar excepcion");
             throw new CupoInsuficienteException();
         }
     }
@@ -110,11 +141,11 @@ public class PersistenciaBMT implements IPersistenciaBMTMockLocal, IPersistencia
      * @param obj Objeto que representa la instancia de la entidad que se quiere
      * crear.
      */
-    public void create(Object obj) {
+   /* public void create(Object obj) {
         initTransaction();
         ventas.persist(obj);
         commitTransaction();
-    }
+    }*/
 
     /**
      * Permite modificar un objeto dentro de la persistencia del sistema.
@@ -122,11 +153,11 @@ public class PersistenciaBMT implements IPersistenciaBMTMockLocal, IPersistencia
      * @param obj Objeto que representa la instancia de la entidad que se quiere
      * modificar.
      */
-    public void update(Object obj) {
+    /*public void update(Object obj) {
         initTransaction();
         ventas.merge(obj);
         commitTransaction();
-    }
+    }*/
 
     /**
      * Permite borrar un objeto dentro de la persistencia del sistema.
@@ -134,11 +165,11 @@ public class PersistenciaBMT implements IPersistenciaBMTMockLocal, IPersistencia
      * @param obj Objeto que representa la instancia de la entidad que se quiere
      * borrar.
      */
-    public void delete(Object obj) {
+    /*public void delete(Object obj) {
         initTransaction();
         ventas.remove(obj);
         commitTransaction();
-    }
+    }*/
 
     /**
      * Retorna la lista de todos los elementos de una clase dada que se
@@ -148,11 +179,11 @@ public class PersistenciaBMT implements IPersistenciaBMTMockLocal, IPersistencia
      * @return list Listado de todos los objetos de una clase dada que se
      * encuentran en el sistema.
      */
-    public List findAll(Class c) {
+    /*public List findAll(Class c) {
         Query query = ventas.createQuery("select O from " + c.getSimpleName() + " as O");
         List result = query.getResultList();
         return result;
-    }
+    }*/
 
     /**
      * Retorna la instancia de una entidad dado un identificador y la clase de
@@ -162,14 +193,14 @@ public class PersistenciaBMT implements IPersistenciaBMTMockLocal, IPersistencia
      * @param id Identificador unico del objeto.
      * @return obj Resultado de la consulta.
      */
-    public Object findById(Class c, Object id) {
+    /*public Object findById(Class c, Object id) {
         return ventas.find(c, id);
-    }
+    }*/
 
     public void insertarVendedor(Vendedor vendedor) {
         try {
             initTransaction();
-            ventas.persist(vendedor);
+            servicioOracle.create(vendedor);
             commitTransaction();
         } catch (Exception e) {
             rollbackTransaction();
@@ -179,7 +210,7 @@ public class PersistenciaBMT implements IPersistenciaBMTMockLocal, IPersistencia
     public void eliminarVendedor(Vendedor vendedor) {
         try {
             initTransaction();
-            ventas.remove(vendedor);
+            servicioOracle.delete(vendedor);
             commitTransaction();
         } catch (Exception e) {
             rollbackTransaction();
@@ -188,13 +219,15 @@ public class PersistenciaBMT implements IPersistenciaBMTMockLocal, IPersistencia
     
     public void insertarTC(TarjetaCreditoAlpes tc) {
         try {
-            tarjeta.persist(tc);
+             initTransaction();
+            servicioDerby.create(tc);
+            commitTransaction();
         } catch (Exception e) {
             rollbackTransaction();
         }
     }
     
     public List findAllTC() {
-        return tarjeta.createQuery("select O from TarjetaCreditoAlpes as O").getResultList();
+        return servicioDerby.findByQuery("select O from TarjetaCreditoAlpes as O");
     }
 }

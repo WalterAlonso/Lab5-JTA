@@ -114,4 +114,10 @@ public class ServicioPersistenciaDerby implements IServicioPersistenciaDerbyMock
         List<Object[]> results = query.getResultList();
         return results;
     }
+    
+    public java.lang.Object findSingleByQuery(String sql) {
+         Query query = entity.createQuery(sql);
+        Object result = query.getSingleResult();
+        return result;
+    }
 }

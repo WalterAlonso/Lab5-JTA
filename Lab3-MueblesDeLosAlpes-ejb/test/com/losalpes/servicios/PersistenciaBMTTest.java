@@ -87,8 +87,7 @@ public class PersistenciaBMTTest {
      */
     @Test
     public void testComprar_TransaccionSatisfactoria() throws OperacionInvalidaException {
-        System.out.println("comprar");
-
+        
         List a = servicioOracle.findAll(Pais.class);
         Ciudad bog = new Ciudad();
         bog.setNombre("Bogota");
@@ -122,26 +121,22 @@ public class PersistenciaBMTTest {
         v.setProducto(m1);
         v.setRegistro(1);
         
-        PersistenciaBMT p = new PersistenciaBMT();
-        p.comprar(v);
+       // PersistenciaBMT p = new PersistenciaBMT();
+       // p.comprar(v);
         
         servicioBMTRemoto.comprar(v);
         //se obtiene la venta
 
         String query = "Select c FROM TarjetaCreditoAlpes c "
-            + "Where c.LOGIN = '" + usuario.getLogin()+"'";
-                 
-        //var tarjet = derby.findByQuery(query, cantidad);
-        List<Object[]> list = servicioDerby.findByQuery(query);
-        TarjetaCreditoAlpes tarjet = (TarjetaCreditoAlpes) list.get(0)[0];
-        //TarjetaCreditoAlpes target = new TarjetaCreditoAlpes();
+            + "Where c.login = '" + usuario.getLogin()+"'";
+        TarjetaCreditoAlpes tarjet = (TarjetaCreditoAlpes) servicioDerby.findSingleByQuery(query);
         assertEquals(9877, tarjet.getCupo());
     }
 
     /**
      * Prueba para agregar un mueble en el sistema
      */
-    @Test
+   /* @Test
     public void testComprar_TransaccionConCupoInsuficiente() {
         System.out.println("comprar");
         PersistenciaBMT instance = new PersistenciaBMT();
@@ -158,9 +153,9 @@ public class PersistenciaBMTTest {
         instance.comprar(v);
         //se obtiene la venta        
         //assertEquals(esperado,actual+1);
-    }
+    }*/
 
-    @Test
+  /*  @Test
     public void testInsertar() throws Exception {
 
         Pais pais = new Pais();
@@ -169,9 +164,9 @@ public class PersistenciaBMTTest {
         servicioBMTRemoto.create(pais);
         int esperado = servicioBMTRemoto.findAll(Pais.class).size();
         assertEquals(esperado, actual + 1);
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void testInsertarTC() throws Exception {
         TarjetaCreditoAlpes tc = new TarjetaCreditoAlpes();
         tc.setBanco("Col");
@@ -188,14 +183,14 @@ public class PersistenciaBMTTest {
         int esperado = servicioBMTRemoto.findAllTC().size();
         System.out.println("Actual: " + esperado);
         assertEquals(esperado, actual + 1);
-    }
+    }*/
 
-    @Test
+   /* @Test
     public void testSome() {
 
         Pais pais = new Pais();
         pais.setNombre("Colombia");
 
         assertEquals("Colombia", pais.getNombre());
-    }
+    }*/
 }

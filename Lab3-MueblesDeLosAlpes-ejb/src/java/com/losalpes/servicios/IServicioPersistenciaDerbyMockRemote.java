@@ -50,4 +50,6 @@ public interface IServicioPersistenciaDerbyMockRemote {
     public java.lang.Object findById(java.lang.Class c, java.lang.Object id);
     
     public List<Object[]> findByQuery(String sql);
+    
+    public java.lang.Object findSingleByQuery(String sql);
 }
