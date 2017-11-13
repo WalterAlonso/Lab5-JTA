@@ -5,15 +5,20 @@
  */
 package com.losalpes.servicios;
 
+import com.losalpes.entities.Ciudad;
 import com.losalpes.entities.Mueble;
 import com.losalpes.entities.Pais;
+import com.losalpes.entities.Profesion;
 import com.losalpes.entities.RegistroVenta;
 import com.losalpes.entities.TarjetaCreditoAlpes;
+import com.losalpes.entities.TipoDocumento;
 import com.losalpes.entities.TipoMueble;
 import com.losalpes.entities.TipoUsuario;
 import com.losalpes.entities.Usuario;
+import com.losalpes.excepciones.OperacionInvalidaException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import javax.naming.InitialContext;
 import org.junit.After;
@@ -39,12 +44,10 @@ public class PersistenciaBMTTest {
      * Interface con referencia al servicio de BMT en el sistema
      */
     private IPersistenciaBMTMockRemote servicioBMTRemoto;
-    
-//
-//private ServicioOracle....
 
-//
-//private ServicioDerby....    
+    private IServicioPersistenciaMockRemote servicioOracle;
+
+    private IServicioPersistenciaDerbyMockRemote servicioDerby;
     
     
     @Before
@@ -58,16 +61,20 @@ public class PersistenciaBMTTest {
             InitialContext contexto;
             contexto = new InitialContext(env);
             servicioBMTRemoto = (IPersistenciaBMTMockRemote) contexto.lookup("com.losalpes.servicios.IPersistenciaBMTMockRemote");
+            servicioOracle = (IServicioPersistenciaMockRemote) contexto.lookup("com.losalpes.servicios.IServicioPersistenciaMockRemote");
+            servicioDerby = (IServicioPersistenciaDerbyMockRemote) contexto.lookup("com.losalpes.servicios.IServicioPersistenciaDerbyMockRemote");            
             
-            //Servicio oracle
-            //Servicio Derby
+            initDataBase();
         } 
         catch (Exception e)
         {
             throw new Exception(e.getMessage());
         }
     }
-
+    
+    public void initDataBase() {
+        
+    }    
     /**
      * Método que se ejecuta después de haber ejecutado la prueba
      */
@@ -83,20 +90,33 @@ public class PersistenciaBMTTest {
      * Prueba para agregar un mueble en el sistema
      */
     @Test
-    public void testComprar_TransaccionSatisfactoria() {
+    public void testComprar_TransaccionSatisfactoria() throws OperacionInvalidaException {
         System.out.println("comprar");
+       
+        List a = servicioOracle.findAll(Pais.class);
+        Ciudad bog = new Ciudad();
+        bog.setNombre("Bogota");
+        ArrayList<Ciudad> ciudades = new ArrayList<>();
+        ciudades.add(bog);
+        Pais pais = new Pais();
+        pais.setNombre("Colombia");
+        pais.setCiudades(ciudades);
+        //servicioOracle.create(pais);
         
         //define usuario:      
-        Usuario usuario = new Usuario("user", "pepito", TipoUsuario.Cliente);
-        //oracle.create(usuario);
+        Usuario usuario = new Usuario("user", "pepito", TipoUsuario.Cliente, "peipto p", 1014207335, TipoDocumento.CC, 4300012, 301309301, bog, "dg", Profesion.Administrador, "correotest@g.com");
+        //servicioOracle.create(usuario);
+        
+        
         
         //la tarjeta con cupo de 10000
         TarjetaCreditoAlpes tarjeta = new TarjetaCreditoAlpes("pepito", "Bancolombia", 10000, new Date(2017,01,15), new Date(2019,01,15), "user");
-        //derby.create(tarjeta);
+        servicioDerby.create(tarjeta);
+        
         
         ArrayList<Mueble> muebles = new ArrayList();
         Mueble m1 = new Mueble(1L, "Silla clásica", "Una confortable silla con estilo del siglo XIX.", TipoMueble.Interior, 45, "sillaClasica", 123);
-        //oracle.create(m1);
+        servicioOracle.create(m1);
         
         //Define el mueble
         RegistroVenta v = new RegistroVenta();
@@ -113,18 +133,16 @@ public class PersistenciaBMTTest {
                         + "Where c.login = " + usuario.getLogin();
                  
         //var tarjet = derby.findByQuery(query, cantidad);
-        //TarjetaCreditoAlpes tarjet = derby.findByQuery(query, cantidad);
-        TarjetaCreditoAlpes target = new TarjetaCreditoAlpes();
-        assertEquals(9877, target.getCupo());
-        
-        
-        //assertEquals(esperado,actual+1);
+        List<Object[]> list = servicioDerby.findByQuery(query);
+        TarjetaCreditoAlpes tarjet = (TarjetaCreditoAlpes) list.get(0)[0];
+        //TarjetaCreditoAlpes target = new TarjetaCreditoAlpes();
+        assertEquals(9877, tarjet.getCupo());
     }
 
     /**
      * Prueba para agregar un mueble en el sistema
      */
-    @Test
+    /*@Test
     public void testComprar_TransaccionConCupoInsuficiente() {
         System.out.println("comprar");
         PersistenciaBMT instance = new PersistenciaBMT();
@@ -141,16 +159,16 @@ public class PersistenciaBMTTest {
         instance.comprar(v);
         //se obtiene la venta        
         //assertEquals(esperado,actual+1);
-    }
+    }*/
     
-    @Test
+    //@Test
     public void testInsertar() {
-        PersistenciaBMT instance = new PersistenciaBMT();
+       /* PersistenciaBMT instance = new PersistenciaBMT();
         Pais pais = new Pais();
         pais.setNombre("Colombia");
         int actual = instance.findAll(Pais.class).size();
         instance.create(pais);
         int esperado = instance.findAll(Pais.class).size();
-        assertEquals(esperado, actual + 1);
+        assertEquals(esperado, actual + 1);*/
     }
 }
